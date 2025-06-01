@@ -1,6 +1,5 @@
 theme: minima
 
-# Enable dark mode
 minima:
   skin: dark
 
