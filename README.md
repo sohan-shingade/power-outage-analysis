@@ -1,8 +1,6 @@
-# ⚡ Power Outage Analysis
 *By Sohan Shingade*
 
 Welcome to my DSC 80 final project!  
-[Explore the dataset →](#introduction)
 
 ## Introduction
 _This section explores the Power Outages dataset..._
