@@ -1,3 +1,4 @@
+# ⚡ Power Outage Analysis
 *By Sohan Shingade*
 
 Welcome to my DSC 80 final project!  
