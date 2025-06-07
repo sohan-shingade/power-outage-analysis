@@ -225,7 +225,6 @@ Despite these limitations, the model serves as a valid and interpretable **basel
 
 
 ## Final Model
-## Final Model
 
 To improve upon the baseline linear regression model, we implemented a more flexible model using a **Random Forest Regressor**. This approach allows the model to better capture non-linear relationships and interactions among features without requiring explicit transformation or assumptions of linearity.
 
@@ -279,4 +278,69 @@ The final model significantly improves over the baseline by reducing RMSE and ad
 
 
 ## Fairness Analysis
-...
+## Fairness Analysis
+
+### Group Definitions
+
+To evaluate fairness, we tested whether the model performs differently for outages caused by severe weather compared to all other causes.
+
+- **Group X**: Severe weather outages
+- **Group Y**: Non-severe weather outages
+
+We are interested in whether the model is **less accurate** for Group X than for Group Y.
+
+### Evaluation Metric
+
+We used **Root Mean Squared Error (RMSE)** as our evaluation metric. RMSE penalizes larger prediction errors more heavily, making it suitable for assessing model accuracy across groups.
+
+### Hypotheses
+
+- **Null Hypothesis (H₀):** The model performs equally well for both groups; any difference in RMSE is due to chance.
+- **Alternative Hypothesis (H₁):** The model performs worse for severe weather outages (i.e., RMSE is higher for Group X).
+
+### Test Statistic and Setup
+
+- **Test Statistic**:  
+  $$ \text{RMSE}_{\text{Severe}} - \text{RMSE}_{\text{Non-Severe}} $$
+- **Observed RMSE (Severe Weather)**: 3,504 minutes  
+- **Observed RMSE (Non-Severe Causes)**: 6,041 minutes  
+- **Observed Difference**: −2,537 minutes  
+- **Significance Level**: 0.05  
+- **p-value**: ~0.823
+
+We used a **permutation test** with 1,000 iterations to simulate the distribution of RMSE differences under the null hypothesis.
+
+---
+
+### Permutation Test Visualization
+
+<iframe src="assets/fairness_permutation_test.html" width="800" height="600" frameborder="0"></iframe>
+
+This histogram shows the distribution of RMSE differences (`Severe − Non-Severe`) across 1,000 permutations.  
+The red dashed line marks the **observed difference**, which lies near the center of the distribution.
+
+#### Why are there two distinct peaks?
+
+The distribution appears **bimodal** due to the nature of permutation sampling with unequal group sizes and non-normal residual distributions.  
+When samples with large residuals are randomly assigned disproportionately to one group, it produces distinct "modes" in the simulated RMSE difference — a common phenomenon when groups differ in size or variance.
+
+---
+
+### Interpretation
+
+We tested whether the model is **less accurate for severe weather outages** by comparing RMSE values between severe and non-severe events.
+
+- The **observed RMSE for severe weather outages** was 3,504 minutes, **lower** than the RMSE for non-severe outages (6,041 minutes).
+- The **observed difference** (Severe − Non-Severe) was **−2,537 minutes**, suggesting the model performs better for severe weather cases.
+- The **permutation test** randomly shuffled the group labels 1,000 times to simulate what kind of differences we'd expect **if there were no true performance gap**.
+- The resulting **p-value (~0.823)** tells us the observed difference is very likely under the null hypothesis.
+
+---
+
+### Conclusion
+
+Since the p-value is **much greater than 0.05**, we **fail to reject the null hypothesis**.
+
+There is **no statistically significant evidence of model unfairness** toward outages caused by severe weather.  
+In fact, the model appears slightly more accurate for these cases, though the difference is not statistically significant.
+
