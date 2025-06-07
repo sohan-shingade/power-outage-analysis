@@ -1,7 +1,3 @@
----
-layout: default
-title: "Power Outage Analysis Focusing on Cause and Duration"
----
 # Power Outage Analysis Focuing on Cause and Duration
 *By Sohan Shingade*
 
