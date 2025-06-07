@@ -278,7 +278,6 @@ The final model significantly improves over the baseline by reducing RMSE and ad
 
 
 ## Fairness Analysis
-## Fairness Analysis
 
 ### Group Definitions
 
