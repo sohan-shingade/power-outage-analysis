@@ -78,7 +78,7 @@ Both cause and climate category significantly impact outage duration. Fuel emerg
 
 ### NMAR Analysis
 
-We analyzed the missingness of the `CUSTOMERS.AFFECTED` column. Smaller outages in remote areas may go unrecorded, indicating that missingness may depend on the value itself—suggesting Not Missing At Random (NMAR).
+We analyzed the missingness of the `CUSTOMERS.AFFECTED` column. Smaller outages in remote areas may go unrecorded, indicating that missingness may depend on the value itself suggesting Not Missing At Random (NMAR).
 
 ### Missingness Dependency Tests
 
@@ -201,7 +201,7 @@ This value reflects the average error between predicted and actual durations and
 
 <iframe src="assets/baseline_residuals_vs_predicted.html" width="800" height="600" frameborder="0"></iframe>
 
-This plot shows the residuals versus predicted outage durations. Residuals tend to grow in variance for longer predictions, indicating **heteroscedasticity** — a violation of the constant error variance assumption in linear regression.
+This plot shows the residuals versus predicted outage durations. Residuals tend to grow in variance for longer predictions, indicating **heteroscedasticity**, a violation of the constant error variance assumption in linear regression.
 
 <iframe src="assets/baseline_avg_residual_by_year.html" width="800" height="600" frameborder="0"></iframe>
 
@@ -232,7 +232,7 @@ To improve upon the baseline linear regression model, we implemented a more flex
 
 While the features used were the same as in the baseline model, their treatment in a nonlinear model enables improved performance without manual feature creation. Specifically:
 
-- **Random Forests naturally handle feature interactions** — e.g., how the combination of `CAUSE.CATEGORY` and `CLIMATE.CATEGORY` affects outage duration.
+- **Random Forests naturally handle feature interactions** - e.g., how the combination of `CAUSE.CATEGORY` and `CLIMATE.CATEGORY` affects outage duration.
 - Nonlinear splits allow for better representation of effects in skewed variables such as `POPULATION` and `ANOMALY.LEVEL`.
 - Including both geographic (e.g., `U.S._STATE`, `NERC.REGION`) and temporal (e.g., `YEAR`, `MONTH`) features allows the model to learn region- and time-specific patterns.
 
@@ -260,7 +260,7 @@ This improvement indicates that the Random Forest model captures the data's stru
 
 <iframe src="assets/final_residuals_vs_predicted.html" width="800" height="600" frameborder="0"></iframe>
 
-The residuals are mostly centered near 0, especially for mid-range predictions. A few extreme underpredictions (negative residuals) indicate the model struggles with rare, very long outages — a challenge due to their low frequency in the dataset.
+The residuals are mostly centered near 0, especially for mid-range predictions. A few extreme underpredictions (negative residuals) indicate the model struggles with rare, very long outages, a challenge due to their low frequency in the dataset.
 
 <iframe src="assets/final_avg_residual_by_year.html" width="800" height="600" frameborder="0"></iframe>
 
@@ -274,7 +274,7 @@ The distribution of residuals is **left-skewed**, indicating that while most pre
 
 ### Conclusion
 
-The final model significantly improves over the baseline by reducing RMSE and adapting to the complex, non-linear relationships in the data. While prediction accuracy is strong for typical cases, rare, extreme events remain difficult to model — pointing to a need for either specialized modeling techniques or data augmentation focused on high-impact cases.
+The final model significantly improves over the baseline by reducing RMSE and adapting to the complex, non-linear relationships in the data. While prediction accuracy is strong for typical cases, rare, extreme events remain difficult to model, pointing to a need for either specialized modeling techniques or data augmentation focused on high-impact cases.
 
 
 ## Fairness Analysis
@@ -321,7 +321,7 @@ The red dashed line marks the **observed difference**, which lies near the cente
 #### Why are there two distinct peaks?
 
 The distribution appears **bimodal** due to the nature of permutation sampling with unequal group sizes and non-normal residual distributions.  
-When samples with large residuals are randomly assigned disproportionately to one group, it produces distinct "modes" in the simulated RMSE difference — a common phenomenon when groups differ in size or variance.
+When samples with large residuals are randomly assigned disproportionately to one group, it produces distinct "modes" in the simulated RMSE difference, which is a common phenomenon when groups differ in size or variance.
 
 ---
 
