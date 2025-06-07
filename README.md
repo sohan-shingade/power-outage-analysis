@@ -1,5 +1,3 @@
-# 
-# Power Outage Analysis
 *By Sohan Shingade*
 
 This report presents an end-to-end data analysis project conducted as part of the DSC 80 final project at UC San Diego. The goal is to analyze and predict power outage durations in the United States using a structured dataset and the full data science lifecycle.
