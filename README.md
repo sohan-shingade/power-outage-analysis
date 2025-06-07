@@ -1,85 +1,68 @@
-# ⚡ Power Outage Analysis
+# Power Outage Analysis
 *By Sohan Shingade*
 
-Welcome to my DSC 80 final project!  
+This report presents an end-to-end data analysis project conducted as part of the DSC 80 final project at UC San Diego. The goal is to analyze and predict power outage durations in the United States using a structured dataset and the full data science lifecycle.
 
 ## Introduction
 
-Power outages affect millions of people every year, and understanding why some outages last longer than others can help communities, utilities, and policymakers better prepare for and respond to these disruptions.
+Power outages affect millions of people every year. Understanding why some outages last longer than others can help communities, utilities, and policymakers better prepare for and respond to these disruptions.
 
-In this project, I investigate the question:
+In this project, we investigate the following research question:
 
 **Do weather-related power outages tend to last longer than outages caused by other reasons?**
 
-This question matters because weather events like storms, hurricanes, and extreme heat are becoming more frequent with climate change. If such outages are more disruptive, identifying this pattern could motivate investments in infrastructure resilience and emergency planning.
+This question is important because weather events like storms, hurricanes, and extreme heat are becoming more frequent due to climate change. If such outages are more disruptive, identifying this pattern could inform infrastructure investments and emergency planning.
 
-The dataset contains information on thousands of power outages in the U.S. After cleaning, I analyzed **2,247** outage events.
+The dataset contains information on thousands of power outages in the U.S. After cleaning, we analyzed **2,247** outage events. The following columns are particularly relevant:
 
-Here are the key columns relevant to this question:
+- `OUTAGE.DURATION`: Duration of the outage in hours.
+- `CAUSE.CATEGORY`: Broad cause of the outage.
+- `OUTAGE.START`, `OUTAGE.RESTORATION`: Timestamps of the outage start and restoration.
+- `U.S._STATE`: State where the outage occurred.
+- `CLIMATE.CATEGORY`: Climate classification.
+- `POPULATION`, `POPDEN_URBAN`, `POPDEN_RURAL`: Demographic context.
+- `RES.PRICE`, `COM.PRICE`: Electricity prices.
+- `GDP`: Economic output of the region.
 
-- `OUTAGE.DURATION`: Duration of the outage, in hours.
-- `CAUSE.CATEGORY`: Broad cause of the outage (e.g., Weather, Equipment Failure).
-- `OUTAGE.START`, `OUTAGE.RESTORATION`: Timestamps for when the outage began and ended.
-- `U.S._STATE`: The state where the outage occurred.
-- `CLIMATE.CATEGORY`: Regional climate label (e.g., Humid, Dry).
-- `POPULATION`, `POPDEN_URBAN`, `POPDEN_RURAL`: Demographic details of the affected area.
-- `RES.PRICE`, `COM.PRICE`: Local residential and commercial electricity prices.
-- `GDP`: Economic activity in the affected region.
-
-Through this analysis, I aim to determine whether outages caused by weather are statistically longer than those caused by other factors — and what variables might influence this.
+Our objective is to analyze whether weather-related outages are statistically longer and to build a model that predicts outage duration from available predictors.
 
 ## Data Cleaning and Exploratory Data Analysis
 
+### Data Cleaning
 
-### 🧼 Data Cleaning
+The raw dataset required several preprocessing steps to ensure accurate analysis:
 
-The raw Power Outage dataset contained metadata rows, string-encoded numbers, and time information split across multiple columns — all of which needed to be cleaned before analysis could begin.
+- **Metadata Removal**: Skipped the first three non-data rows in the Excel file.
+- **Datetime Construction**: Combined separate date and time columns into unified `OUTAGE.START` and `OUTAGE.RESTORATION` timestamps.
+- **Duration Calculation**: Created `OUTAGE.DURATION` by subtracting start time from restoration time (in hours).
+- **Data Type Correction**: Parsed string-encoded numerical values (e.g., GDP, prices) into floats.
+- **Missing Value Handling**: Replaced placeholder strings with `NaN` values.
 
-Here are the major steps I took to clean the data:
+These steps reflect typical issues encountered in real-world datasets and ensured consistent formatting for downstream analysis.
 
-- **Removed Metadata Rows**: The first three rows in the Excel file were not actual data but headers and notes. These were skipped using `pd.read_excel(..., skiprows=3)`.
-- **Combined Date and Time Columns**: The start and restoration times of each outage were split into separate date and time columns. I combined them into two `pd.Timestamp` columns called `OUTAGE.START` and `OUTAGE.RESTORATION`, which are easier to compare and compute durations from.
-- **Computed Outage Duration**: I created a new column, `OUTAGE.DURATION`, calculated in hours as the difference between `OUTAGE.RESTORATION` and `OUTAGE.START`. This is the target variable for both hypothesis testing and prediction.
-- **Parsed Numerical Columns**: Columns like population and GDP were stored as strings with commas or dollar signs. I stripped these out and converted the values to floats so they could be used in statistical analysis and modeling.
-- **Handled Missing Values**: I replaced placeholder values (like `'-'`) with actual `NaN` values, allowing for appropriate handling in missingness analysis and modeling.
-
-These steps reflect the real-world messiness of datasets that are compiled from various regional and governmental sources. Cleaning was essential for ensuring accurate durations, numeric computations, and valid model input.
-
-Below is a preview of the cleaned DataFrame:
-
-|   YEAR |   MONTH | U.S._STATE   | POSTAL.CODE   | NERC.REGION   | CLIMATE.REGION     |   ANOMALY.LEVEL | CLIMATE.CATEGORY   | OUTAGE.START.DATE   | OUTAGE.START.TIME   | OUTAGE.RESTORATION.DATE   | OUTAGE.RESTORATION.TIME   | CAUSE.CATEGORY     | CAUSE.CATEGORY.DETAIL   |   HURRICANE.NAMES |   OUTAGE.DURATION |   DEMAND.LOSS.MW |   CUSTOMERS.AFFECTED |   RES.PRICE |   COM.PRICE |   IND.PRICE |   TOTAL.PRICE |   RES.SALES |   COM.SALES |   IND.SALES |   TOTAL.SALES |   RES.PERCEN |   COM.PERCEN |   IND.PERCEN |   RES.CUSTOMERS |   COM.CUSTOMERS |   IND.CUSTOMERS |   TOTAL.CUSTOMERS |   RES.CUST.PCT |   COM.CUST.PCT |   IND.CUST.PCT |   PC.REALGSP.STATE |   PC.REALGSP.USA |   PC.REALGSP.REL |   PC.REALGSP.CHANGE |   UTIL.REALGSP |   TOTAL.REALGSP |   UTIL.CONTRI |   PI.UTIL.OFUSA |   POPULATION |   POPPCT_URBAN |   POPPCT_UC |   POPDEN_URBAN |   POPDEN_UC |   POPDEN_RURAL |   AREAPCT_URBAN |   AREAPCT_UC |   PCT_LAND |   PCT_WATER_TOT |   PCT_WATER_INLAND | OUTAGE.START        | OUTAGE.RESTORATION   |
-|-------:|--------:|:-------------|:--------------|:--------------|:-------------------|----------------:|:-------------------|:--------------------|:--------------------|:--------------------------|:--------------------------|:-------------------|:------------------------|------------------:|------------------:|-----------------:|---------------------:|------------:|------------:|------------:|--------------:|------------:|------------:|------------:|--------------:|-------------:|-------------:|-------------:|----------------:|----------------:|----------------:|------------------:|---------------:|---------------:|---------------:|-------------------:|-----------------:|-----------------:|--------------------:|---------------:|----------------:|--------------:|----------------:|-------------:|---------------:|------------:|---------------:|------------:|---------------:|----------------:|-------------:|-----------:|----------------:|-------------------:|:--------------------|:---------------------|
-|   2011 |       7 | Minnesota    | MN            | MRO           | East North Central |            -0.3 | normal             | 2011-07-01 00:00:00 | 17:00:00            | 2011-07-03 00:00:00       | 20:00:00                  | severe weather     | nan                     |               nan |              3060 |              nan |                70000 |       11.6  |        9.18 |        6.81 |          9.28 | 2.33292e+06 | 2.11477e+06 | 2.11329e+06 |   6.56252e+06 |      35.5491 |      32.225  |      32.2024 |         2308736 |          276286 |           10673 |           2595696 |        88.9448 |        10.644  |       0.411181 |              51268 |            47586 |          1.07738 |                 1.6 |           4802 |          274182 |       1.75139 |             2.2 |      5348119 |          73.27 |       15.28 |           2279 |      1700.5 |           18.2 |            2.14 |          0.6 |    91.5927 |         8.40733 |            5.47874 | 2011-07-01 17:00:00 | 2011-07-03 20:00:00  |
-|   2014 |       5 | Minnesota    | MN            | MRO           | East North Central |            -0.1 | normal             | 2014-05-11 00:00:00 | 18:38:00            | 2014-05-11 00:00:00       | 18:39:00                  | intentional attack | vandalism               |               nan |                 1 |              nan |                  nan |       12.12 |        9.71 |        6.49 |          9.28 | 1.58699e+06 | 1.80776e+06 | 1.88793e+06 |   5.28423e+06 |      30.0325 |      34.2104 |      35.7276 |         2345860 |          284978 |            9898 |           2640737 |        88.8335 |        10.7916 |       0.37482  |              53499 |            49091 |          1.08979 |                 1.9 |           5226 |          291955 |       1.79    |             2.2 |      5457125 |          73.27 |       15.28 |           2279 |      1700.5 |           18.2 |            2.14 |          0.6 |    91.5927 |         8.40733 |            5.47874 | 2014-05-11 18:38:00 | 2014-05-11 18:39:00  |
-|   2010 |      10 | Minnesota    | MN            | MRO           | East North Central |            -1.5 | cold               | 2010-10-26 00:00:00 | 20:00:00            | 2010-10-28 00:00:00       | 22:00:00                  | severe weather     | heavy wind              |               nan |              3000 |              nan |                70000 |       10.87 |        8.19 |        6.07 |          8.15 | 1.46729e+06 | 1.80168e+06 | 1.9513e+06  |   5.22212e+06 |      28.0977 |      34.501  |      37.366  |         2300291 |          276463 |           10150 |           2586905 |        88.9206 |        10.687  |       0.392361 |              50447 |            47287 |          1.06683 |                 2.7 |           4571 |          267895 |       1.70627 |             2.1 |      5310903 |          73.27 |       15.28 |           2279 |      1700.5 |           18.2 |            2.14 |          0.6 |    91.5927 |         8.40733 |            5.47874 | 2010-10-26 20:00:00 | 2010-10-28 22:00:00  |
-|   2012 |       6 | Minnesota    | MN            | MRO           | East North Central |            -0.1 | normal             | 2012-06-19 00:00:00 | 04:30:00            | 2012-06-20 00:00:00       | 23:00:00                  | severe weather     | thunderstorm            |               nan |              2550 |              nan |                68200 |       11.79 |        9.25 |        6.71 |          9.19 | 1.85152e+06 | 1.94117e+06 | 1.99303e+06 |   5.78706e+06 |      31.9941 |      33.5433 |      34.4393 |         2317336 |          278466 |           11010 |           2606813 |        88.8954 |        10.6822 |       0.422355 |              51598 |            48156 |          1.07148 |                 0.6 |           5364 |          277627 |       1.93209 |             2.2 |      5380443 |          73.27 |       15.28 |           2279 |      1700.5 |           18.2 |            2.14 |          0.6 |    91.5927 |         8.40733 |            5.47874 | 2012-06-19 04:30:00 | 2012-06-20 23:00:00  |
-|   2015 |       7 | Minnesota    | MN            | MRO           | East North Central |             1.2 | warm               | 2015-07-18 00:00:00 | 02:00:00            | 2015-07-19 00:00:00       | 07:00:00                  | severe weather     | nan                     |               nan |              1740 |              250 |               250000 |       13.07 |       10.16 |        7.74 |         10.43 | 2.02888e+06 | 2.16161e+06 | 1.77794e+06 |   5.97034e+06 |      33.9826 |      36.2059 |      29.7795 |         2374674 |          289044 |            9812 |           2673531 |        88.8216 |        10.8113 |       0.367005 |              54431 |            49844 |          1.09203 |                 1.7 |           4873 |          292023 |       1.6687  |             2.2 |      5489594 |          73.27 |       15.28 |           2279 |      1700.5 |           18.2 |            2.14 |          0.6 |    91.5927 |         8.40733 |            5.47874 | 2015-07-18 02:00:00 | 2015-07-19 07:00:00  |
-
-### 📊 Univariate Analysis
-
-Below are two visualizations exploring individual columns in the dataset.
+### Univariate Analysis
 
 <iframe src="assets/univar_1_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
 
-The bar chart above shows the **average outage duration by cause category**. Weather-related causes lead to significantly longer outages on average compared to other categories like equipment failure or vandalism. This trend supports the hypothesis that weather plays a major role in prolonged disruptions.
+This bar chart shows average outage duration by cause category. Weather-related causes lead to significantly longer outages on average compared to categories such as equipment failure or vandalism.
 
 <iframe src="assets/univar_2_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
 
-The histogram above displays the **distribution of outage durations**, excluding the top 2% of extreme outliers. Most outages are relatively short, lasting under 20 hours, but the distribution is right-skewed — indicating that while long outages are less common, they do occur and can be extreme.
+The histogram displays the distribution of outage durations (top 2% removed). Most outages last under 20 hours, but a right-skewed tail suggests occasional extreme durations.
 
-### 🔗 Bivariate Analysis
+### Bivariate Analysis
 
 <iframe src="assets/bivar_1_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
 
-The scatter plot above shows the relationship between **state population and outage duration**, excluding extreme outliers. There’s no strong correlation visible, suggesting that larger state populations don’t necessarily correspond to longer or shorter outages. This implies that outage duration is likely influenced by other factors, such as infrastructure or cause.
+This scatter plot compares population and outage duration (top 2% removed). There is no clear relationship, implying other features may drive outage length.
 
 <iframe src="assets/bivar_4_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
 
-The box plot above illustrates **outage duration by month**, again with extreme durations filtered out. While most months have similar median durations, some — like February and June — show longer tails, potentially due to seasonal weather patterns (e.g., winter storms or summer heat waves).
+The box plot shows outage duration by month. February and June have longer tails, possibly due to seasonal weather patterns.
 
-### 🧮 Interesting Aggregates
+### Interesting Aggregates
 
-The table below shows the **average outage duration** (in minutes) for each combination of `CAUSE.CATEGORY` and `CLIMATE.CATEGORY`:
+The table below shows the average outage duration (in minutes) for each combination of `CAUSE.CATEGORY` and `CLIMATE.CATEGORY`:
 
 | CAUSE.CATEGORY        |      cold |   normal |      warm |
 |:----------------------|----------:|---------:|----------:|
@@ -89,112 +72,84 @@ The table below shows the **average outage duration** (in minutes) for each comb
 | islanding             |   259.267 |  142.176 |   209.833 |
 | public appeal         |  2125.91  | 1376.53  |   596.231 |
 
-**Key Observations**:
-
-- **Fuel supply emergencies** result in the longest outages across all climate types, especially in **warm climates** (22,800 minutes on average).
-- **Severe weather** also leads to long outages (3,300–4,400 minutes), relatively consistent across all climate categories.
-- **Intentional attacks** and **islanding** events tend to produce much **shorter outages**, regardless of climate.
-- **Public appeal** and **equipment failure** have wide variation depending on the climate, with the highest durations in **normal climates**.
-
-**Insight**:
-
-Both the **cause** and the **climate** play a significant role in how long outages last. Some causes (like fuel emergencies) are consistently high-impact, while others show more climate sensitivity. The relative consistency of **severe weather** across climates suggests it may be an important predictor of long outages, independent of season — a key consideration for modeling in later steps.
+Both cause and climate category significantly impact outage duration. Fuel emergencies and severe weather consistently result in longer outages, while events like vandalism are shorter and less climate-sensitive.
 
 ## Assessment of Missingness
 
-### ❓ NMAR Analysis
+### NMAR Analysis
 
-We focused on the column `CUSTOMERS.AFFECTED`, which records how many people were impacted by each outage.
+We analyzed the missingness of the `CUSTOMERS.AFFECTED` column. Smaller outages in remote areas may go unrecorded, indicating that missingness may depend on the value itself—suggesting Not Missing At Random (NMAR).
 
-This column is a strong candidate for being **Not Missing At Random (NMAR)**. Smaller outages, especially in rural or low-priority areas, may not be well-recorded or even reported. If the likelihood of missingness is related to the actual (unseen) number of affected customers, then this violates the assumption of randomness and suggests an NMAR mechanism.
-
----
-
-### 🔄 Missingness Dependency Tests
-
-To explore whether the missingness in `CUSTOMERS.AFFECTED` is associated with other variables, we performed two permutation tests.
-
-#### 1. Dependence on `OUTAGE.DURATION`
+### Missingness Dependency Tests
 
 <iframe src="assets/missingness_vs_duration.html" width="800" height="600" frameborder="0"></iframe>
 
-- **Observed difference in means**: 773.5 minutes  
-- **p-value**: 0.019
-
-Since the p-value is below the 0.05 significance threshold, we reject the null hypothesis. This means the missingness of `CUSTOMERS.AFFECTED` is **statistically associated with outage duration**. Specifically, shorter outages are more likely to have missing customer counts — supporting the idea that missingness is tied to the magnitude of the outage itself, consistent with an **NMAR** mechanism.
-
-#### 2. Dependence on `POPULATION`
+The test for `OUTAGE.DURATION` revealed a mean difference of 773.5 minutes with a p-value of 0.019. We reject the null hypothesis and conclude that shorter outages are more likely to have missing `CUSTOMERS.AFFECTED` values, consistent with NMAR.
 
 <iframe src="assets/missingness_vs_population.html" width="800" height="600" frameborder="0"></iframe>
 
-- **Observed difference in population**: −642,879 people  
-- **p-value**: 0.321
+For `POPULATION`, the p-value was 0.321. We do not find statistical evidence of dependence, suggesting missingness is MCAR with respect to population.
 
-This p-value is well above the 0.05 threshold, so we fail to reject the null hypothesis. There is **no statistically significant evidence** that missingness in `CUSTOMERS.AFFECTED` depends on population size, consistent with **MCAR (Missing Completely At Random)** relative to this variable.
+### Conclusion
 
----
-
-### ✅ Conclusion
-
-- `CUSTOMERS.AFFECTED` is likely **NMAR with respect to `OUTAGE.DURATION`** — smaller or shorter outages are underreported.
-- It appears **MCAR with respect to `POPULATION`** — missingness does not depend on how populated the area is.
-
-These findings highlight how missingness can behave differently across variables and reinforce the need to consider the data generating process when interpreting incomplete data.
-
+- `CUSTOMERS.AFFECTED` is NMAR with respect to outage duration.
+- It appears MCAR with respect to population.
 
 ## Hypothesis Testing
 
-### ❓ Question
+### Question
 
-Do **weather-related outages** tend to last longer than outages caused by **non-weather-related factors**?
+Do weather-related outages last longer than non-weather-related ones?
 
-To answer this, we conducted a permutation test comparing the average outage durations between these two groups.
+### Hypotheses
 
----
+- **Null (H₀):** Mean durations are equal.
+- **Alternative (H₁):** Weather-related outages have longer mean durations.
 
-### 🧪 Hypotheses
+### Test Setup
 
-- **Null Hypothesis (H₀):** The average outage duration is the same for weather-related and non-weather-related outages.  
-  Any difference in means is due to random chance.
-
-- **Alternative Hypothesis (H₁):** The average outage duration for **weather-related outages is greater** than that for non-weather-related outages.
-
-This is a **one-sided test** since we’re specifically testing whether weather causes **longer** outages.
-
----
-
-### 📊 Test Details
-
-- **Test Statistic:** Difference in mean outage durations between the two groups:  
-  \( \bar{x}_{\text{weather}} - \bar{x}_{\text{non-weather}} \)
-
-- **Significance Level:** 0.05
-
-- **Observed Difference:** 798.56 minutes  
-- **p-value:** 0.012
-
----
-
-### 📈 Visualization
+- **Test**: One-sided Welch’s t-test  
+- **Observed difference**: 798.56 minutes  
+- **p-value**: 0.012  
+- **Significance level**: 0.05
 
 <iframe src="assets/hypothesis_duration_by_weather.html" width="800" height="600" frameborder="0"></iframe>
 
-This plot shows the empirical distribution of the test statistic under the null hypothesis, with the observed difference marked. The observed value lies in the extreme right tail, which supports rejecting the null.
+The box plot shows weather-related outages generally last longer. Outliers were excluded (top 2%).
 
----
+### Conclusion
 
-### ✅ Conclusion
-
-Since the p-value is below 0.05, we reject the null hypothesis. This provides **statistical evidence** that weather-related outages **tend to last longer** than those caused by other factors.
-
-While we cannot claim a causal relationship, the result is consistent with real-world intuition — severe weather events often lead to more widespread and harder-to-repair damage, which likely prolongs restoration efforts.
-
----
-
-
+We reject the null hypothesis. There is statistical evidence that weather-related outages tend to last longer than others.
 
 ## Framing a Prediction Problem
-...
+
+We now attempt to predict the duration of an outage using available data.
+
+### Prediction Problem and Type
+
+This is a **regression** problem:  
+**Given contextual and situational data at the start of an outage, predict how long the outage will last (in minutes).**
+
+### Response Variable
+
+- **Target**: `OUTAGE.DURATION`  
+  This variable is both operationally and economically meaningful, and is computable from known start and end times.
+
+### Evaluation Metric
+
+- **Metric**: Root Mean Squared Error (RMSE)  
+  RMSE is appropriate because it emphasizes large errors and is interpretable in minutes.
+
+### Features Used
+
+Only features known **at the time of prediction** were used, including:
+
+- `CAUSE.CATEGORY`, `CLIMATE.CATEGORY`, `ANOMALY.LEVEL`
+- `U.S._STATE`, `YEAR`, `MONTH`
+- `GDP`, `POPULATION`, `POPDEN_URBAN`, `POPDEN_RURAL`
+- `RES.PRICE`, `COM.PRICE`
+
+This ensures temporal validity and makes the model feasible for real-time prediction.
 
 ## Baseline Model
 ...
