@@ -55,6 +55,20 @@ Below is a preview of the cleaned DataFrame:
 |   2012 |       6 | Minnesota    | MN            | MRO           | East North Central |            -0.1 | normal             | 2012-06-19 00:00:00 | 04:30:00            | 2012-06-20 00:00:00       | 23:00:00                  | severe weather     | thunderstorm            |               nan |              2550 |              nan |                68200 |       11.79 |        9.25 |        6.71 |          9.19 | 1.85152e+06 | 1.94117e+06 | 1.99303e+06 |   5.78706e+06 |      31.9941 |      33.5433 |      34.4393 |         2317336 |          278466 |           11010 |           2606813 |        88.8954 |        10.6822 |       0.422355 |              51598 |            48156 |          1.07148 |                 0.6 |           5364 |          277627 |       1.93209 |             2.2 |      5380443 |          73.27 |       15.28 |           2279 |      1700.5 |           18.2 |            2.14 |          0.6 |    91.5927 |         8.40733 |            5.47874 | 2012-06-19 04:30:00 | 2012-06-20 23:00:00  |
 |   2015 |       7 | Minnesota    | MN            | MRO           | East North Central |             1.2 | warm               | 2015-07-18 00:00:00 | 02:00:00            | 2015-07-19 00:00:00       | 07:00:00                  | severe weather     | nan                     |               nan |              1740 |              250 |               250000 |       13.07 |       10.16 |        7.74 |         10.43 | 2.02888e+06 | 2.16161e+06 | 1.77794e+06 |   5.97034e+06 |      33.9826 |      36.2059 |      29.7795 |         2374674 |          289044 |            9812 |           2673531 |        88.8216 |        10.8113 |       0.367005 |              54431 |            49844 |          1.09203 |                 1.7 |           4873 |          292023 |       1.6687  |             2.2 |      5489594 |          73.27 |       15.28 |           2279 |      1700.5 |           18.2 |            2.14 |          0.6 |    91.5927 |         8.40733 |            5.47874 | 2015-07-18 02:00:00 | 2015-07-19 07:00:00  |
 
+### 📊 Univariate Analysis
+
+Below are two visualizations exploring individual columns in the dataset.
+
+<iframe src="assets/univar_1_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
+
+The bar chart above shows the **average outage duration by cause category**. Weather-related causes lead to significantly longer outages on average compared to other categories like equipment failure or vandalism. This trend supports the hypothesis that weather plays a major role in prolonged disruptions.
+
+<iframe src="assets/univar_2_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
+
+The histogram above displays the **distribution of outage durations**, excluding the top 2% of extreme outliers. Most outages are relatively short, lasting under 20 hours, but the distribution is right-skewed — indicating that while long outages are less common, they do occur and can be extreme.
+
+
+
 ## Assessment of Missingness
 ...
 
