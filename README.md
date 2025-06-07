@@ -73,7 +73,7 @@ The histogram above displays the **distribution of outage durations**, excluding
 
 The scatter plot above shows the relationship between **state population and outage duration**, excluding extreme outliers. There’s no strong correlation visible, suggesting that larger state populations don’t necessarily correspond to longer or shorter outages. This implies that outage duration is likely influenced by other factors, such as infrastructure or cause.
 
-<iframe src="assets/step2/bivar_4_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
+<iframe src="assets/bivar_4_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
 
 The box plot above illustrates **outage duration by month**, again with extreme durations filtered out. While most months have similar median durations, some — like February and June — show longer tails, potentially due to seasonal weather patterns (e.g., winter storms or summer heat waves).
 
@@ -142,7 +142,6 @@ This p-value is well above the 0.05 threshold, so we fail to reject the null hyp
 These findings highlight how missingness can behave differently across variables and reinforce the need to consider the data generating process when interpreting incomplete data.
 
 
-## Hypothesis Testing
 ## Hypothesis Testing
 
 ### ❓ Question
