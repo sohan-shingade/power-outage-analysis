@@ -343,3 +343,9 @@ Since the p-value is **much greater than 0.05**, we **fail to reject the null hy
 There is **no statistically significant evidence of model unfairness** toward outages caused by severe weather.  
 In fact, the model appears slightly more accurate for these cases, though the difference is not statistically significant.
 
+---
+## Acknowledgments
+
+Portions of this project — including phrasing, debugging strategies, and formatting — were supported with the assistance of ChatGPT.  
+The model was used to help refine explanations, ensure clarity of communication, and troubleshoot technical formatting issues.  
+All analysis, modeling, and conclusions were authored and verified by me.
