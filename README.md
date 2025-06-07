@@ -300,7 +300,7 @@ We used **Root Mean Squared Error (RMSE)** as our evaluation metric. RMSE penali
 ### Test Statistic and Setup
 
 - **Test Statistic**:  
-  $$ \text{RMSE}_{\text{Severe}} - \text{RMSE}_{\text{Non-Severe}} $$
+  RMSE for Severe Weather − RMSE for Non-Severe Causes
 - **Observed RMSE (Severe Weather)**: 3,504 minutes  
 - **Observed RMSE (Non-Severe Causes)**: 6,041 minutes  
 - **Observed Difference**: −2,537 minutes  
