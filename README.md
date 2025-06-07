@@ -69,11 +69,11 @@ The histogram above displays the **distribution of outage durations**, excluding
 
 ### 🔗 Bivariate Analysis
 
-<iframe src="assets/bivar_1_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
+<iframe src="assets/step2/bivar_1_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
 
 The scatter plot above shows the relationship between **state population and outage duration**, excluding extreme outliers. There’s no strong correlation visible, suggesting that larger state populations don’t necessarily correspond to longer or shorter outages. This implies that outage duration is likely influenced by other factors, such as infrastructure or cause.
 
-<iframe src="assets/bivar_4_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
+<iframe src="assets/step2/bivar_4_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
 
 The box plot above illustrates **outage duration by month**, again with extreme durations filtered out. While most months have similar median durations, some — like February and June — show longer tails, potentially due to seasonal weather patterns (e.g., winter storms or summer heat waves).
 
@@ -81,9 +81,13 @@ The box plot above illustrates **outage duration by month**, again with extreme 
 
 The table below shows the **average outage duration** (in minutes) for each combination of `CAUSE.CATEGORY` and `CLIMATE.CATEGORY`:
 
-
-'| CAUSE.CATEGORY                |      cold |   normal |      warm |\n|:------------------------------|----------:|---------:|----------:|\n| equipment failure             |   308.235 | 3201.43  |   505     |\n| fuel supply emergency         | 17433     | 7658.82  | 22799.7   |\n| intentional attack            |   497.282 |  426.818 |   312.557 |\n| islanding                     |   259.267 |  142.176 |   209.833 |\n| public appeal                 |  2125.91  | 1376.53  |   596.231 |\n| severe weather                |  3279.95  | 4059.33  |  4416.69  |\n| system operability disruption |   601.861 |  941.018 |   478.2   |'
-
+| CAUSE.CATEGORY        |      cold |   normal |      warm |
+|:----------------------|----------:|---------:|----------:|
+| equipment failure     |   308.235 | 3201.43  |   505     |
+| fuel supply emergency | 17433     | 7658.82  | 22799.7   |
+| intentional attack    |   497.282 |  426.818 |   312.557 |
+| islanding             |   259.267 |  142.176 |   209.833 |
+| public appeal         |  2125.91  | 1376.53  |   596.231 |
 
 **Key Observations**:
 
@@ -96,9 +100,47 @@ The table below shows the **average outage duration** (in minutes) for each comb
 
 Both the **cause** and the **climate** play a significant role in how long outages last. Some causes (like fuel emergencies) are consistently high-impact, while others show more climate sensitivity. The relative consistency of **severe weather** across climates suggests it may be an important predictor of long outages, independent of season — a key consideration for modeling in later steps.
 
-
 ## Assessment of Missingness
-...
+
+### ❓ NMAR Analysis
+
+We focused on the column `CUSTOMERS.AFFECTED`, which records how many people were impacted by each outage.
+
+This column is a strong candidate for being **Not Missing At Random (NMAR)**. Smaller outages, especially in rural or low-priority areas, may not be well-recorded or even reported. If the likelihood of missingness is related to the actual (unseen) number of affected customers, then this violates the assumption of randomness and suggests an NMAR mechanism.
+
+---
+
+### 🔄 Missingness Dependency Tests
+
+To explore whether the missingness in `CUSTOMERS.AFFECTED` is associated with other variables, we performed two permutation tests.
+
+#### 1. Dependence on `OUTAGE.DURATION`
+
+<iframe src="assets/missingness_vs_duration.html" width="800" height="600" frameborder="0"></iframe>
+
+- **Observed difference in means**: 773.5 minutes  
+- **p-value**: 0.019
+
+Since the p-value is below the 0.05 significance threshold, we reject the null hypothesis. This means the missingness of `CUSTOMERS.AFFECTED` is **statistically associated with outage duration**. Specifically, shorter outages are more likely to have missing customer counts — supporting the idea that missingness is tied to the magnitude of the outage itself, consistent with an **NMAR** mechanism.
+
+#### 2. Dependence on `POPULATION`
+
+<iframe src="assets/missingness_vs_population.html" width="800" height="600" frameborder="0"></iframe>
+
+- **Observed difference in population**: −642,879 people  
+- **p-value**: 0.321
+
+This p-value is well above the 0.05 threshold, so we fail to reject the null hypothesis. There is **no statistically significant evidence** that missingness in `CUSTOMERS.AFFECTED` depends on population size, consistent with **MCAR (Missing Completely At Random)** relative to this variable.
+
+---
+
+### ✅ Conclusion
+
+- `CUSTOMERS.AFFECTED` is likely **NMAR with respect to `OUTAGE.DURATION`** — smaller or shorter outages are underreported.
+- It appears **MCAR with respect to `POPULATION`** — missingness does not depend on how populated the area is.
+
+These findings highlight how missingness can behave differently across variables and reinforce the need to consider the data generating process when interpreting incomplete data.
+
 
 ## Hypothesis Testing
 ...
