@@ -59,11 +59,11 @@ Below is a preview of the cleaned DataFrame:
 
 Below are two visualizations exploring individual columns in the dataset.
 
-<iframe src="assets/step2/univar_1_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
+<iframe src="assets/step2/univar_1_outage_duration_hist.html" frameborder="0"></iframe>
 
 The bar chart above shows the **average outage duration by cause category**. Weather-related causes lead to significantly longer outages on average compared to other categories like equipment failure or vandalism. This trend supports the hypothesis that weather plays a major role in prolonged disruptions.
 
-<iframe src="assets/step2/univar_2_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
+<iframe src="assets/step2/univar_2_outage_duration_hist.html"  frameborder="0"></iframe>
 
 The histogram above displays the **distribution of outage durations**, excluding the top 2% of extreme outliers. Most outages are relatively short, lasting under 20 hours, but the distribution is right-skewed — indicating that while long outages are less common, they do occur and can be extreme.
 
