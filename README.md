@@ -152,7 +152,77 @@ Only features known **at the time of prediction** were used, including:
 This ensures temporal validity and makes the model feasible for real-time prediction.
 
 ## Baseline Model
-...
+## Baseline Model
+
+To establish a performance benchmark for predicting outage duration, we constructed a baseline regression model using a linear approach with minimal feature engineering.
+
+### Model Description
+
+We implemented a **Linear Regression** model using a `sklearn` pipeline that included preprocessing for both numerical and categorical variables:
+
+- **Numerical features** were standardized using `StandardScaler`.
+- **Categorical features** were encoded using `OneHotEncoder` with `handle_unknown="ignore"`.
+
+This pipeline allows for consistent transformation and easy reproducibility across training and test sets.
+
+### Features Used
+
+The model used the following features:
+
+#### Quantitative (6):
+- `YEAR`
+- `MONTH`
+- `ANOMALY.LEVEL`
+- `POPULATION`
+- `POPDEN_URBAN`
+- `POPDEN_RURAL`
+
+#### Nominal (6):
+- `U.S._STATE`
+- `NERC.REGION`
+- `CAUSE.CATEGORY`
+- `CAUSE.CATEGORY.DETAIL`
+- `CLIMATE.REGION`
+- `CLIMATE.CATEGORY`
+
+There were no ordinal variables in this model. All categorical features were one-hot encoded. Only rows with no missing values in these features or in the target (`OUTAGE.DURATION`) were used.
+
+---
+
+### Performance
+
+- **Root Mean Squared Error (RMSE) on Test Set:** **6,728.98 minutes** (approximately 4.7 days)
+
+This value reflects the average error between predicted and actual durations and provides a reference for future models.
+
+---
+
+### Residual Diagnostics
+
+<iframe src="assets/baseline_residuals_vs_predicted.html" width="800" height="600" frameborder="0"></iframe>
+
+This plot shows the residuals versus predicted outage durations. Residuals tend to grow in variance for longer predictions, indicating **heteroscedasticity** — a violation of the constant error variance assumption in linear regression.
+
+<iframe src="assets/baseline_avg_residual_by_year.html" width="800" height="600" frameborder="0"></iframe>
+
+This line plot displays the **average residual per year**. The model tends to **underpredict** durations in earlier years and **overpredict** around 2009, suggesting possible **temporal drift** or shifts in recording practices.
+
+<iframe src="assets/baseline_residual_hist.html" width="800" height="600" frameborder="0"></iframe>
+
+The histogram of residuals is roughly centered around 0 but shows a **right-skewed distribution**, indicating that the model often **underestimates very long outages**.
+
+---
+
+### Interpretation
+
+The baseline linear model captures broad trends but shows several limitations:
+
+- It struggles with extreme durations.
+- Residuals are heteroscedastic, violating assumptions of linear regression.
+- It shows bias over time, particularly in older records.
+
+Despite these limitations, the model serves as a valid and interpretable **baseline** against which more complex models (e.g., Random Forests) can be measured. A significant drop in RMSE in future models would demonstrate better fit to the true data-generating process.
+
 
 ## Final Model
 ...
