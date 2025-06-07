@@ -225,7 +225,58 @@ Despite these limitations, the model serves as a valid and interpretable **basel
 
 
 ## Final Model
-...
+## Final Model
+
+To improve upon the baseline linear regression model, we implemented a more flexible model using a **Random Forest Regressor**. This approach allows the model to better capture non-linear relationships and interactions among features without requiring explicit transformation or assumptions of linearity.
+
+### Feature Engineering and Justification
+
+While the features used were the same as in the baseline model, their treatment in a nonlinear model enables improved performance without manual feature creation. Specifically:
+
+- **Random Forests naturally handle feature interactions** — e.g., how the combination of `CAUSE.CATEGORY` and `CLIMATE.CATEGORY` affects outage duration.
+- Nonlinear splits allow for better representation of effects in skewed variables such as `POPULATION` and `ANOMALY.LEVEL`.
+- Including both geographic (e.g., `U.S._STATE`, `NERC.REGION`) and temporal (e.g., `YEAR`, `MONTH`) features allows the model to learn region- and time-specific patterns.
+
+These features are all known at the **start of an outage**, ensuring the model is valid for real-time prediction.
+
+### Modeling Algorithm and Tuning
+
+We used the following setup:
+
+- **Model**: `RandomForestRegressor(n_estimators=100, random_state=1)`
+- **Preprocessing**: Standard scaling for numeric variables, one-hot encoding for categorical variables (same as baseline).
+- **Hyperparameters**: For this initial version, we used default settings aside from the number of trees. In future iterations, grid search can further optimize depth, leaf size, or feature subsampling.
+
+### Performance Comparison
+
+- **Baseline Model RMSE**: 6,728.98 minutes
+- **Final Model RMSE**: **4,695.41 minutes**
+- **Improvement**: ~2,034 minutes (~30% reduction in RMSE)
+
+This improvement indicates that the Random Forest model captures the data's structure more effectively than linear regression.
+
+---
+
+### Residual Diagnostics
+
+<iframe src="assets/final_residuals_vs_predicted.html" width="800" height="600" frameborder="0"></iframe>
+
+The residuals are mostly centered near 0, especially for mid-range predictions. A few extreme underpredictions (negative residuals) indicate the model struggles with rare, very long outages — a challenge due to their low frequency in the dataset.
+
+<iframe src="assets/final_avg_residual_by_year.html" width="800" height="600" frameborder="0"></iframe>
+
+The average residual by year is generally close to 0, with occasional dips (e.g., in 2000 and 2010) potentially caused by unique events not well represented in the training set.
+
+<iframe src="assets/final_residual_hist.html" width="800" height="600" frameborder="0"></iframe>
+
+The distribution of residuals is **left-skewed**, indicating that while most predictions are close to the true value, some extremely long outages are underestimated.
+
+---
+
+### Conclusion
+
+The final model significantly improves over the baseline by reducing RMSE and adapting to the complex, non-linear relationships in the data. While prediction accuracy is strong for typical cases, rare, extreme events remain difficult to model — pointing to a need for either specialized modeling techniques or data augmentation focused on high-impact cases.
+
 
 ## Fairness Analysis
 ...
