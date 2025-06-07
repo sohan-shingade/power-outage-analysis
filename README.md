@@ -59,14 +59,42 @@ Below is a preview of the cleaned DataFrame:
 
 Below are two visualizations exploring individual columns in the dataset.
 
-<iframe src="assets/step2/univar_1_outage_duration_hist.html" frameborder="0"></iframe>
+<iframe src="assets/step2/univar_1_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
 
 The bar chart above shows the **average outage duration by cause category**. Weather-related causes lead to significantly longer outages on average compared to other categories like equipment failure or vandalism. This trend supports the hypothesis that weather plays a major role in prolonged disruptions.
 
-<iframe src="assets/step2/univar_2_outage_duration_hist.html"  frameborder="0"></iframe>
+<iframe src="assets/step2/univar_2_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
 
 The histogram above displays the **distribution of outage durations**, excluding the top 2% of extreme outliers. Most outages are relatively short, lasting under 20 hours, but the distribution is right-skewed — indicating that while long outages are less common, they do occur and can be extreme.
 
+### 🔗 Bivariate Analysis
+
+<iframe src="assets/bivar_1_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
+
+The scatter plot above shows the relationship between **state population and outage duration**, excluding extreme outliers. There’s no strong correlation visible, suggesting that larger state populations don’t necessarily correspond to longer or shorter outages. This implies that outage duration is likely influenced by other factors, such as infrastructure or cause.
+
+<iframe src="assets/bivar_4_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
+
+The box plot above illustrates **outage duration by month**, again with extreme durations filtered out. While most months have similar median durations, some — like February and June — show longer tails, potentially due to seasonal weather patterns (e.g., winter storms or summer heat waves).
+
+### 🧮 Interesting Aggregates
+
+The table below shows the **average outage duration** (in minutes) for each combination of `CAUSE.CATEGORY` and `CLIMATE.CATEGORY`:
+
+
+'| CAUSE.CATEGORY                |      cold |   normal |      warm |\n|:------------------------------|----------:|---------:|----------:|\n| equipment failure             |   308.235 | 3201.43  |   505     |\n| fuel supply emergency         | 17433     | 7658.82  | 22799.7   |\n| intentional attack            |   497.282 |  426.818 |   312.557 |\n| islanding                     |   259.267 |  142.176 |   209.833 |\n| public appeal                 |  2125.91  | 1376.53  |   596.231 |\n| severe weather                |  3279.95  | 4059.33  |  4416.69  |\n| system operability disruption |   601.861 |  941.018 |   478.2   |'
+
+
+**Key Observations**:
+
+- **Fuel supply emergencies** result in the longest outages across all climate types, especially in **warm climates** (22,800 minutes on average).
+- **Severe weather** also leads to long outages (3,300–4,400 minutes), relatively consistent across all climate categories.
+- **Intentional attacks** and **islanding** events tend to produce much **shorter outages**, regardless of climate.
+- **Public appeal** and **equipment failure** have wide variation depending on the climate, with the highest durations in **normal climates**.
+
+**Insight**:
+
+Both the **cause** and the **climate** play a significant role in how long outages last. Some causes (like fuel emergencies) are consistently high-impact, while others show more climate sensitivity. The relative consistency of **severe weather** across climates suggests it may be an important predictor of long outages, independent of season — a key consideration for modeling in later steps.
 
 
 ## Assessment of Missingness
