@@ -59,17 +59,17 @@ Below is a preview of the cleaned DataFrame:
 
 Below are two visualizations exploring individual columns in the dataset.
 
-<iframe src="assets/step2/univar_1_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
+<iframe src="assets/univar_1_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
 
 The bar chart above shows the **average outage duration by cause category**. Weather-related causes lead to significantly longer outages on average compared to other categories like equipment failure or vandalism. This trend supports the hypothesis that weather plays a major role in prolonged disruptions.
 
-<iframe src="assets/step2/univar_2_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
+<iframe src="assets/univar_2_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
 
 The histogram above displays the **distribution of outage durations**, excluding the top 2% of extreme outliers. Most outages are relatively short, lasting under 20 hours, but the distribution is right-skewed — indicating that while long outages are less common, they do occur and can be extreme.
 
 ### 🔗 Bivariate Analysis
 
-<iframe src="assets/step2/bivar_1_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
+<iframe src="assets/bivar_1_outage_duration_hist.html" width="800" height="600" frameborder="0"></iframe>
 
 The scatter plot above shows the relationship between **state population and outage duration**, excluding extreme outliers. There’s no strong correlation visible, suggesting that larger state populations don’t necessarily correspond to longer or shorter outages. This implies that outage duration is likely influenced by other factors, such as infrastructure or cause.
 
@@ -143,7 +143,56 @@ These findings highlight how missingness can behave differently across variables
 
 
 ## Hypothesis Testing
-...
+## Hypothesis Testing
+
+### ❓ Question
+
+Do **weather-related outages** tend to last longer than outages caused by **non-weather-related factors**?
+
+To answer this, we conducted a permutation test comparing the average outage durations between these two groups.
+
+---
+
+### 🧪 Hypotheses
+
+- **Null Hypothesis (H₀):** The average outage duration is the same for weather-related and non-weather-related outages.  
+  Any difference in means is due to random chance.
+
+- **Alternative Hypothesis (H₁):** The average outage duration for **weather-related outages is greater** than that for non-weather-related outages.
+
+This is a **one-sided test** since we’re specifically testing whether weather causes **longer** outages.
+
+---
+
+### 📊 Test Details
+
+- **Test Statistic:** Difference in mean outage durations between the two groups:  
+  \( \bar{x}_{\text{weather}} - \bar{x}_{\text{non-weather}} \)
+
+- **Significance Level:** 0.05
+
+- **Observed Difference:** 798.56 minutes  
+- **p-value:** 0.012
+
+---
+
+### 📈 Visualization
+
+<iframe src="assets/hypothesis_duration_by_weather.html" width="800" height="600" frameborder="0"></iframe>
+
+This plot shows the empirical distribution of the test statistic under the null hypothesis, with the observed difference marked. The observed value lies in the extreme right tail, which supports rejecting the null.
+
+---
+
+### ✅ Conclusion
+
+Since the p-value is below 0.05, we reject the null hypothesis. This provides **statistical evidence** that weather-related outages **tend to last longer** than those caused by other factors.
+
+While we cannot claim a causal relationship, the result is consistent with real-world intuition — severe weather events often lead to more widespread and harder-to-repair damage, which likely prolongs restoration efforts.
+
+---
+
+
 
 ## Framing a Prediction Problem
 ...
